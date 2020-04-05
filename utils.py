@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 
@@ -13,12 +14,23 @@ def topk(matrix, k, axis=0):
         return a_part[:, 0:k][column_index, a_sec_argsort_K]
 
 
-def save_match_result(query_name, matches):
-    pass
+def save_match_result(query_name, matches, exp_info):
+    save_dir = _get_save_dir(exp_info)
+    result = ['{} {}\n'.format(name, dist) for name, dist in matches]
+    filename = _get_query_result_filename(query_name)
+    filename = os.path.join(save_dir, filename)
+    with open(filename, 'w') as f:
+        f.writelines(result)
 
 
-def save_precision_result(precision):
-    pass
+def save_precision_result(precision, avg_precision, exp_info):
+    save_dir = _get_save_dir(exp_info)
+    result = ['{} {}\n'.format(name, p) for name, p in precision]
+    filename = 'res_overall.txt'
+    filename = os.path.join(save_dir, filename)
+    with open(filename, 'w') as f:
+        f.writelines(result)
+        f.write('{}\n'.format(avg_precision))
 
 
 class Precision:
@@ -35,3 +47,16 @@ class Precision:
 
     def get_precision(self):
         return self.correct / self.total
+
+
+def _get_save_dir(exp_info):
+    dir_name = '{}_{}'.format(exp_info['partition'], exp_info['metric'][0])
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+    return dir_name
+
+
+def _get_query_result_filename(qn):
+    category, name = qn.split('/')
+    name = name.split('.')[0]
+    return 'res_{}_{}.txt'.format(category, name)

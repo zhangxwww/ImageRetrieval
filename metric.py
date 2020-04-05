@@ -34,7 +34,7 @@ def BH(p, q):
     :param q: m * d
     :return:  n * m
     """
-    p, q, n, m, pp, qq = _prepare(p, q)
+    _, _, _, _, pp, qq = _prepare(p, q)
     sqrt = np.sqrt(pp * qq)  # n * m * d
     return np.sqrt(1 - np.sum(sqrt, axis=2))
 
@@ -49,4 +49,8 @@ def _prepare(p, q):
     return p, q, n, m, pp, qq
 
 
-METRICS = [L2, HI, BH]
+METRICS = {
+    'L2': L2,
+    'HI': HI,
+    'BH': BH
+}

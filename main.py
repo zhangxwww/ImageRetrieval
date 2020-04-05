@@ -14,8 +14,11 @@ def main():
     for p in PARTITIONS:
         all_feature = np.stack([histogram(i, p) for i in all_images], axis=0)
         query_feature = np.stack([histogram(i, p) for i in query_images], axis=0)
-        for m in METRICS:
-            run_exp(p, m, {
+        for m in METRICS.items():
+            run_exp({
+                'partition': p,
+                'metric': m
+            }, {
                 'all_feature': all_feature,
                 'query_feature': query_feature,
                 'all_name': all_image_names,
@@ -23,11 +26,12 @@ def main():
             })
 
 
-def run_exp(partition, metric, data):
+def run_exp(exp_info, data):
     af = data['all_feature']
     qf = data['query_feature']
     an = data['all_name']
     qn = data['query_name']
+    metric_name, metric = exp_info['metric']
     distance = metric(af, qf)
     closest = topk(distance, K, axis=0)
     n_query = qf.shape[0]
@@ -39,9 +43,10 @@ def run_exp(partition, metric, data):
         for idx in index:
             matches.append((an[idx], distance[idx, i]))
             p.check(an[idx])
-        save_match_result(qn[i], matches)
+        save_match_result(qn[i], matches, exp_info)
         precision.append((qn[i], p.get_precision()))
-    save_precision_result(precision)
+    avg_precision = sum([p[1] for p in precision]) / len(precision)
+    save_precision_result(precision, avg_precision, exp_info)
 
 
 if __name__ == '__main__':
