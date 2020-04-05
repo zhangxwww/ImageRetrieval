@@ -47,3 +47,6 @@ def _prepare(p, q):
     pp = p.reshape((n, 1, -1))
     qq = q.reshape((1, m, -1))
     return p, q, n, m, pp, qq
+
+
+METRICS = [L2, HI, BH]

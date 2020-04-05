@@ -15,3 +15,6 @@ def histogram(img, partition):
     res = [np.sum(interval == i) for i in range(partition)]
 
     return np.array(res)
+
+
+PARTITIONS = [16, 128]
