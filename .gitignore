@@ -9,7 +9,7 @@
 *.exe
 # Session
 Session.vim
-
+*.txt
 DataSet/*
 
 # Temporary
