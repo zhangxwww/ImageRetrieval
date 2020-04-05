@@ -10,6 +10,8 @@
 # Session
 Session.vim
 
+DataSet/*
+
 # Temporary
 .netrwhist
 *~
