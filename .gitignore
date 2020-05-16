@@ -11,7 +11,7 @@
 Session.vim
 *.txt
 DataSet/*
-
+*.txt
 # Temporary
 .netrwhist
 *~

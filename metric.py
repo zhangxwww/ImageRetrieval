@@ -7,9 +7,9 @@ def L2(p, q):
     :param q: m * d
     :return:  n * m
     """
-    _, _, n, m, pp, qq = _prepare(p, q)
+    _, _, _, _, pp, qq = _prepare(p, q)
     delta = pp - qq
-    return np.sqrt(np.sum(delta * delta, axis=2).reshape((n, m)))
+    return np.sqrt(np.sum(delta * delta, axis=2))
 
 
 def HI(p, q):
@@ -25,7 +25,8 @@ def HI(p, q):
     min_ = rr.min(axis=0)  # n * m * d
     dividend = min_.sum(axis=2)  # n * m
     divider = q.sum(axis=1).reshape((1, -1))  # 1 * m
-    return dividend / divider
+    return -dividend / divider
+    # return dividend
 
 
 def BH(p, q):
@@ -34,7 +35,11 @@ def BH(p, q):
     :param q: m * d
     :return:  n * m
     """
-    _, _, _, _, pp, qq = _prepare(p, q)
+    p, q, n, m, _, _ = _prepare(p, q)
+    p /= p.sum(axis=1, keepdims=True)
+    q /= q.sum(axis=1, keepdims=True)
+    pp = p.reshape((n, 1, -1))
+    qq = q.reshape((1, m, -1))
     sqrt = np.sqrt(pp * qq)  # n * m * d
     return np.sqrt(1 - np.sum(sqrt, axis=2))
 
