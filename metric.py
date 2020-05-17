@@ -26,7 +26,6 @@ def HI(p, q):
     dividend = min_.sum(axis=2)  # n * m
     divider = q.sum(axis=1).reshape((1, -1))  # 1 * m
     return -dividend / divider
-    # return dividend
 
 
 def BH(p, q):
@@ -44,6 +43,35 @@ def BH(p, q):
     return np.sqrt(1 - np.sum(sqrt, axis=2))
 
 
+def CR(p, q):
+    """
+    :param p: n * d
+    :param q: m * d
+    :return:  n * m
+    """
+    _, _, _, _, pp, qq = _prepare(p, q)
+    pp_m = pp.mean(axis=2, keepdims=True)  # n * 1 * 1
+    qq_m = qq.mean(axis=2, keepdims=True)  # 1 * m * 1
+    pp = pp - pp_m  # n * 1 * d
+    qq = qq - qq_m  # 1 * m * d
+    dividend = (pp * qq).sum(axis=2)  # n * m
+    divider = np.sqrt((pp ** 2).sum(axis=2) * (qq ** 2).sum(axis=2))  # n * m
+    return -dividend / divider
+
+
+def CS(p, q):
+    """
+    :param p: n * d
+    :param q: m * d
+    :return:  n * m
+    """
+    _, _, _, _, pp, qq = _prepare(p, q)
+    dividend = (pp - qq) ** 2  # n * m * d
+    divider = pp + qq  # n * m * d
+    divider = np.where(divider < 1e-5, np.inf, divider)
+    return (dividend / divider).sum(axis=2)
+
+
 def _prepare(p, q):
     p = p.astype(np.float)
     q = q.astype(np.float)
@@ -57,5 +85,7 @@ def _prepare(p, q):
 METRICS = {
     'L2': L2,
     'HI': HI,
-    'BH': BH
+    'BH': BH,
+    'CR': CR,
+    'CS': CS
 }
